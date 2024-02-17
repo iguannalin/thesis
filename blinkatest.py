@@ -1,15 +1,19 @@
-import time
 import board
 import digitalio
+import busio
 
-print("press the button!")
+print("Hello blinka!")
 
-led = digitalio.DigitalInOut(board.D18)
-led.direction = digitalio.Direction.OUTPUT
+# Try to great a Digital input
+pin = digitalio.DigitalInOut(board.D4)
+print("Digital IO ok!")
 
-button = digitalio.DigitalInOut(board.D4)
-button.direction = digitalio.Direction.INPUT
-button.pull = digitalio.Pull.UP
+# Try to create an I2C device
+i2c = busio.I2C(board.SCL, board.SDA)
+print("I2C ok!")
 
-while True:
-    led.value = not button.value # light when button is pressed!
+# Try to create an SPI device
+spi = busio.SPI(board.SCLK, board.MOSI, board.MISO)
+print("SPI ok!")
+
+print("done!")
