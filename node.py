@@ -19,7 +19,7 @@ app = Flask(__name__)
 send = False
 
 @app.route("/listen/")
-async def listen():
+def listen():
   print("listening ...")
   if request and request.args:
     id = request.args.get('id')
@@ -27,19 +27,17 @@ async def listen():
       print(id)
   return "<p>Hello, World!</p>"
 
+async def buttonPress():
+  # if not button.value:
+  #   shout()
+  led.value = not button.value
+
 @app.route("/shout/")
 def shout():
-  requests.get("http://http://127.0.0.1:5000/listen/?id=1")
-  # if not button.value:
-    # requests.get("http://172.20.10.7:5000/listen/?id=1")
+  requests.get("http://192.168.12.242:5000/listen/?id=1")
   return "<p>Hello, World!</p>"
 
 if __name__ == '__main__':
-    asyncio.run(listen())
+    listen()
+    asyncio.run(buttonPress())
     app.run(debug=True, host='0.0.0.0')
-# while True:
-#   if not button.value:
-#     send = True
-#   if send:
-#     requests.get("http://http://127.0.0.1:5000/listen/?id=1")
-#     send = False

@@ -1,6 +1,5 @@
 # raspberry.local
 
-import asyncio
 import requests
 from flask import Flask, request
 
@@ -19,7 +18,7 @@ app = Flask(__name__)
 send = False
 
 @app.route("/listen/")
-async def listen():
+def listen():
   print("listening ...")
   if request and request.args:
     id = request.args.get('id')
@@ -27,18 +26,19 @@ async def listen():
       print(id)
   return "<p>Hello, World!</p>"
 
+def buttonPress(pressed):
+  led.value = pressed
+  if pressed:
+    shout()
+
 @app.route("/shout/")
 def shout():
-  requests.get("http://127.0.0.1:3000/listen/?id=2")
-  # if not button.value:
-  #   requests.get("http://172.20.10.8:5000/listen/?id=2")
+  requests.get("http://192.168.12.165:5000/listen/?id=2")
   return "<p>Hello, World!</p>"
 
-# asyncio.run(listen())
-# shout()
-while True:
-  if not button.value:
-    send = True
-  if send:
-    requests.get("http://127.0.0.1:3000/listen/?id=2")
-    send = False
+if __name__ == '__main__':
+    listen()
+    while True:
+      buttonPress(not button.value)
+    shout()
+    app.run(debug=True, host='0.0.0.0')
