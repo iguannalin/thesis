@@ -1,43 +1,16 @@
-# raspberry.local
-
-import asyncio
-import requests
-from flask import Flask, request
-
 import board
-import digitalio
+import touchio
+from adafruit_debouncer import Debouncer, Button
 
-led = digitalio.DigitalInOut(board.D18)
-led.direction = digitalio.Direction.OUTPUT
+THRESHOLD = 1000
+t = touchio.TouchIn(board.GP12)
+t.threshold = t.raw_value + THRESHOLD
+touchpad = Button(t, value_when_pressed=True)
 
-button = digitalio.DigitalInOut(board.D4)
-button.direction = digitalio.Direction.INPUT
-button.pull = digitalio.Pull.UP
+while True:
+    touchpad.update()
+    if touchpad.rose:
 
-app = Flask(__name__)
-
-send = False
-
-@app.route("/listen/")
-def listen():
-  print("listening ...")
-  if request and request.args:
-    id = request.args.get('id')
-    if id:
-      print(id)
-  return "<p>Hello, World!</p>"
-
-async def buttonPress():
-  # if not button.value:
-  #   shout()
-  led.value = not button.value
-
-@app.route("/shout/")
-def shout():
-  requests.get("http://192.168.12.242:5000/listen/?id=1")
-  return "<p>Hello, World!</p>"
-
-if __name__ == '__main__':
-    listen()
-    asyncio.run(buttonPress())
-    app.run(debug=True, host='0.0.0.0')
+        print("Touch On")
+    if touchpad.fell:
+        print("Touch Off")
