@@ -33,7 +33,7 @@ def buttonPress(pressed):
 
 @app.route("/shout/")
 def shout():
-  requests.get("http://192.168.12.165:5000/listen/?id=2")
+  requests.get("http://192.168.1.5:5000/listen/?id=2")
   return "<p>Hello, World!</p>"
 
 if __name__ == '__main__':
