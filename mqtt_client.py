@@ -9,6 +9,7 @@ led.direction = digitalio.Direction.OUTPUT
 button = digitalio.DigitalInOut(board.D4)
 button.direction = digitalio.Direction.INPUT
 button.pull = digitalio.Pull.UP
+NODE = "P1"
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, reason_code):
@@ -20,12 +21,12 @@ def on_connect(client, userdata, flags, reason_code):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
-    if ("P2" in str(msg.payload)):
+    if (NODE in str(msg.payload)):
         led.value = True # light when button is pressed!
-        time.sleep(1)
+        time.sleep(1) # sleep 2 for p2
         led.value = False
 
-mqttc = mqtt.Client("P2")
+mqttc = mqtt.Client(NODE)
 # mqttc.username_pw_set("theyonetwork","ConnDevSP24")
 mqttc.on_connect = on_connect
 mqttc.on_message = on_message
@@ -42,7 +43,11 @@ mqttc.connect("broker.hivemq.com", 1883, 60)
 while True:
     mqttc.loop()
     # mqttc.publish("ITPtest", "P1")
+    time.sleep(1)
     if not button.value:
       led.value = True
-      mqttc.publish("ITPtest", "P1")
+      if NODE == "P1":
+        mqttc.publish("ITPtest", "P2")
+      else:
+        mqttc.publish("ITPtest", "P1")
       led.value = False
