@@ -20,8 +20,10 @@ def on_connect(client, userdata, flags, reason_code):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
+    if ("P1" in str(msg.payload)):
+        led.value = True # light when button is pressed!
 
-mqttc = mqtt.Client("P2")
+mqttc = mqtt.Client("P1")
 # mqttc.username_pw_set("theyonetwork","ConnDevSP24")
 mqttc.on_connect = on_connect
 mqttc.on_message = on_message
@@ -38,5 +40,4 @@ mqttc.loop()
 while True:
     mqttc.loop()
     time.sleep(1)
-    led.value = not button.value # light when button is pressed!
-    mqttc.publish("ITPtest", button.value)
+    mqttc.publish("ITPtest", "P2")

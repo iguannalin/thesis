@@ -37,8 +37,8 @@ def shout():
   return "<p>Hello, World!</p>"
 
 if __name__ == '__main__':
-    listen()
-    while True:
-      buttonPress(not button.value)
-    shout()
     app.run(debug=True, host='0.0.0.0')
+    # listen()
+    # while True:
+    #   buttonPress(not button.value)
+    # shout()

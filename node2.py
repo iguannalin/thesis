@@ -1,44 +1,64 @@
 # raspberry.local
+import socket
 
-import requests
-from flask import Flask, request
+# Configurations
+server_ip = ""
+server_port = 8080
 
-import board
-import digitalio
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+  server_socket.bind((server_ip, server_port))
+  server_socket.listen()
+  
+  print("Waiting for connections...")
 
-led = digitalio.DigitalInOut(board.D18)
-led.direction = digitalio.Direction.OUTPUT
+  while True:
+        conn, addr = server_socket.accept()
+        with conn:
+            print(f"Connected by {addr}")
 
-button = digitalio.DigitalInOut(board.D4)
-button.direction = digitalio.Direction.INPUT
-button.pull = digitalio.Pull.UP
+            while True:
+               print("Image received successfully")
 
-app = Flask(__name__)
 
-send = False
+# import requests
+# from flask import Flask, request
 
-@app.route("/listen/")
-def listen():
-  print("listening ...")
-  if request and request.args:
-    id = request.args.get('id')
-    if id:
-      print(id)
-  return "<p>Hello, World!</p>"
+# import board
+# import digitalio
 
-def buttonPress(pressed):
-  led.value = pressed
-  if pressed:
-    shout()
+# led = digitalio.DigitalInOut(board.D18)
+# led.direction = digitalio.Direction.OUTPUT
 
-@app.route("/shout/")
-def shout():
-  requests.get("http://192.168.1.5:5000/listen/?id=2")
-  return "<p>Hello, World!</p>"
+# button = digitalio.DigitalInOut(board.D4)
+# button.direction = digitalio.Direction.INPUT
+# button.pull = digitalio.Pull.UP
 
-if __name__ == '__main__':
-    listen()
-    while True:
-      buttonPress(not button.value)
-    shout()
-    app.run(debug=True, host='0.0.0.0')
+# app = Flask(__name__)
+
+# send = False
+
+# @app.route("/listen/")
+# def listen():
+#   print("listening ...")
+#   if request and request.args:
+#     id = request.args.get('id')
+#     if id:
+#       print(id)
+#   return "<p>Hello, World!</p>"
+
+# def buttonPress(pressed):
+#   led.value = pressed
+#   if pressed:
+#     shout()
+
+# @app.route("/shout/")
+# def shout():
+#   requests.get("http://192.168.1.5:5000/listen/?id=2")
+#   return "<p>Hello, World!</p>"
+
+# if __name__ == '__main__':
+#     listen()
+#     while True:
+#       buttonPress(not button.value)
+#     shout()
+#     app.run(debug=True, host='0.0.0.0')
