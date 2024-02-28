@@ -1,5 +1,14 @@
-import time
 import paho.mqtt.client as mqtt
+import board
+import digitalio
+import time
+
+led = digitalio.DigitalInOut(board.D18)
+led.direction = digitalio.Direction.OUTPUT
+
+button = digitalio.DigitalInOut(board.D4)
+button.direction = digitalio.Direction.INPUT
+button.pull = digitalio.Pull.UP
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, reason_code):
@@ -12,7 +21,7 @@ def on_connect(client, userdata, flags, reason_code):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
 
-mqttc = mqtt.Client("pi1")
+mqttc = mqtt.Client("P2")
 # mqttc.username_pw_set("theyonetwork","ConnDevSP24")
 mqttc.on_connect = on_connect
 mqttc.on_message = on_message
@@ -29,4 +38,5 @@ mqttc.loop()
 while True:
     mqttc.loop()
     time.sleep(1)
-    mqttc.publish("fromP1", "HI!")
+    led.value = not button.value # light when button is pressed!
+    mqttc.publish("ITPtest", button.value)
