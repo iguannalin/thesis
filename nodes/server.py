@@ -1,7 +1,10 @@
 # Save this as main.py on the pico that will be the server node
 
-# Webserver to send RGB data
-# Tony Goodhew 5 July 2022
+# Program to read RGB values from a local Pico Web Server:
+# Tony Goodhew 5th July 2022
+# Program for capacitive touch on micropython:
+# https://github.com/AncientJames/jtouch/tree/main
+
 import network
 import socket
 import time
@@ -202,7 +205,8 @@ def main():
             touch.update()
             print('\r', end='')
             for c in touch.channels:
-                scale = min(PWM_MAX, int(c.level)*PWM_MAX)
+                print(c.level)
+                scale = min(PWM_MAX, int(c.level*PWM_MAX))
                 print(scale)
                 if (scale > 0.5):
                     send_request(str(scale))
