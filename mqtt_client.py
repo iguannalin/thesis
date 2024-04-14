@@ -2,6 +2,10 @@ import paho.mqtt.client as mqtt
 import board
 import digitalio
 import time
+import serial
+
+ser = serial.Serial('/dev/ttyACM0',9600, timeout=1)
+  
 
 led = digitalio.DigitalInOut(board.D18)
 led.direction = digitalio.Direction.OUTPUT
@@ -46,11 +50,16 @@ while True:
     #   mqttc.publish("ITPtest", "P2")
     # else:
     #   mqttc.publish("ITPtest", "P1")
-    if not button.value:
+    # if not button.value:
+    read_serial=ser.readline()
+    print(read_serial)
+    print("HIGH" in str(read_serial))
+    if ("HIGH" in str(read_serial)):
       led.value = True
       if (NODE == "P1"):
+        print(read_serial)
         mqttc.publish("ITPtest-P2", "HI")
       else:
         mqttc.publish("ITPtest-P1", "HI")
-      time.sleep(1)
-      led.value = False
+    time.sleep(1)
+    led.value = False
