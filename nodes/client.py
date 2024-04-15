@@ -1,24 +1,20 @@
-# this will run on every node
+# Save this as main.py on the pico that will be the CLIENT node
 
-# Program to read RGB values from a local Pico Web Server
+# Program to read RGB values from a local Pico Web Server:
 # Tony Goodhew 5th July 2022
-# Connect to network
-
 # Program for capacitive touch on micropython:
 # https://github.com/AncientJames/jtouch/tree/main
 
 import network
-import rp2
-import time
 import socket
+import time
 import machine
-from secret import ssid, password
+import rp2
+from secret import ssid,password
 
-machine.freq(125_000_000)
-pwm = machine.PWM(machine.Pin(28))
-pwm.freq(1000)
-led = machine.Pin("LED", machine.Pin.OUT)
-led.value(1)
+# *
+# * NETWORK CONNECTION
+# *
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
@@ -31,6 +27,12 @@ while not wlan.isconnected() and wlan.status() >= 0:
 wlan.status() # 3 == success
 wlan.ifconfig()
 print(wlan.ifconfig())
+
+# *
+# * CAPACITIVE TOUCH
+# *
+
+machine.freq(125_000_000)
 
 @rp2.asm_pio(set_init=[rp2.PIO.OUT_LOW])
 def capsense():
@@ -86,7 +88,6 @@ def capsense():
     # time's up - push the count
     mov(isr,x)
     push(block)
-
 
 u32max = const((1<<32)-1)
 
@@ -150,38 +151,33 @@ class Device:
             
     def level(self, channel):
         return self.channels[channel].level
-        
+
+led = machine.Pin("LED", machine.Pin.OUT)
+led.value(1)
+# motor pin
+pwm = machine.PWM(machine.Pin(28))
+pwm.freq(1000)
+# cap. touch pins
+caps = [0, 4]
+PWM_MAX = 65025
 
 # self test
 def main():
-    bars = ['⠀', '⡀', '⣀', '⣄', '⣤', '⣦', '⣶', '⣷', '⣿']
-    
-    with (Device((0, 4, 8, 12))) as touch:
-        while True:
-            touch.update()
-            
-            print('\r', end='')
-            for c in touch.channels:
-                print(c.level)
-                print(f'   {bars[min(len(bars)-1, int(c.level * len(bars)))]}', end='')
-                
-            time.sleep(0.01)
+    while True:
+        ai = socket.getaddrinfo("10.23.10.92", 80) # Address of Web Server
+        addr = ai[0][-1]
+
+        # Create a socket and make a HTTP request
+        s = socket.socket() # Open socket
+        s.connect(addr)
+        s.send(b"GET Data") # Send request
+        ss=str(s.recv(512))[2:-1] # Store reply
+        # Print what we received
+        print(ss)
+        
+        pwm.duty_u16(int(ss))
+        s.close()          # Close socket
+        time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
-
-
-# while True:
-#     ai = socket.getaddrinfo("10.23.10.224", 80) # Address of Web Server
-#     addr = ai[0][-1]
-
-#     # Create a socket and make a HTTP request
-#     s = socket.socket() # Open socket
-#     s.connect(addr)
-#     s.send(b"GET Data") # Send request
-#     ss=str(s.recv(512))[2:-1] # Store reply
-#     # Print what we received
-#     print(ss)
-    
-#     pwm.duty_u16(int(ss))
-#     s.close()          # Close socket

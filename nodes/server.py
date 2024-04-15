@@ -200,19 +200,26 @@ PWM_MAX = 65025
 
 # self test
 def main():
+    touched = False
     with (Device(caps)) as touch:
         while True:
             touch.update()
             print('\r', end='')
             for c in touch.channels:
+                if (c.level > 0.5):
+                    touched = True
+                elif (not touched and c.level <= 0.5):
+                    touched = False
+            if touched:
                 print(c.level)
                 scale = min(PWM_MAX, int(c.level*PWM_MAX))
-                print(scale)
-                if (scale > 0.5):
-                    send_request(str(scale))
-                    pwm.duty_u16(scale)
+                send_request(str(scale))
+                pwm.duty_u16(scale)
                 
-            time.sleep(0.01)
+            time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
+
+
+
