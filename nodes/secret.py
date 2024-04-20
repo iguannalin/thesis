@@ -1,2 +1,2 @@
-ssid = 'sandbox370'
-password = '+s0a+s03!2gether?'
+ssid = 'NETGEAR46'
+password = 'rapidiris229'
