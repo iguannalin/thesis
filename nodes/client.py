@@ -168,25 +168,21 @@ PWM_MAX = 65025
 # self test
 def main():
     while True:
-        ai = socket.getaddrinfo("10.23.10.92", 80) # Address of Web Server
-        addr = ai[0][-1]
+        addr = socket.getaddrinfo("192.168.1.3", 80)[0][-1] # Address of Web Server
 
         # Create a socket and make a HTTP request
         s = socket.socket() # Open socket
         s.connect(addr)
-        s.send(b"GET Data") # Send request
         ss=str(s.recv(512))[2:-1] # Store reply
         # Print what we received
         # print(ss)
         
         pwm.duty_u16(int(ss))
+        if (int(ss) > 1000):
+            s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
         s.close()          # Close socket
         time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
-
-
-
-
 
