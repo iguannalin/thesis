@@ -12,6 +12,9 @@ import machine
 import rp2
 from secret import ssid,password
 
+# turn board LED on
+led = machine.Pin("LED", machine.Pin.OUT)
+
 # *
 # * NETWORK CONNECTION
 # *
@@ -20,13 +23,16 @@ wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(ssid, password)
 while not wlan.isconnected() and wlan.status() >= 0:
-    print("Waiting to connect:")
+    # print("Waiting to connect:")
+    led.value(1)
     time.sleep(1)
+    led.value(0)
  
 # Should be connected and have an IP address
 wlan.status() # 3 == success
 wlan.ifconfig()
-print(wlan.ifconfig())
+led.value(1)
+# print(wlan.ifconfig())
 
 # *
 # * CAPACITIVE TOUCH
@@ -152,8 +158,6 @@ class Device:
     def level(self, channel):
         return self.channels[channel].level
 
-led = machine.Pin("LED", machine.Pin.OUT)
-led.value(1)
 # motor pin
 pwm = machine.PWM(machine.Pin(28))
 pwm.freq(1000)
@@ -173,7 +177,7 @@ def main():
         s.send(b"GET Data") # Send request
         ss=str(s.recv(512))[2:-1] # Store reply
         # Print what we received
-        print(ss)
+        # print(ss)
         
         pwm.duty_u16(int(ss))
         s.close()          # Close socket
@@ -181,3 +185,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
+

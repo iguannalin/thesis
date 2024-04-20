@@ -12,6 +12,9 @@ import machine
 import rp2
 from secret import ssid,password
 
+# turn board LED on
+led = machine.Pin("LED", machine.Pin.OUT)
+
 # *
 # * NETWORK CONNECTION
 # *
@@ -19,23 +22,31 @@ from secret import ssid,password
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(ssid, password)
+is_connnected = False
 
 # Wait for connect or fail
 max_wait = 10
 while max_wait > 0:
+    if max_wait % 2 == 0:
+        led.value(1)
+    else:
+        led.value(0)
+    # print(wlan.status())
     if wlan.status() < 0 or wlan.status() >= 3:
         break
     max_wait -= 1
-    print('waiting for connection...')
+    # print('waiting for connection...')
     time.sleep(1)
 
 # Handle connection error
 if wlan.status() != 3:
     raise RuntimeError('network connection failed')
 else:
-    print('connected')
+    led.value(1)
+    is_connnected = True
+    # print('connected')
     status = wlan.ifconfig()
-    print( 'ip = ' + status[0] )
+    # print( 'ip = ' + status[0] )
 
 # Open socket
 addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
@@ -44,24 +55,24 @@ s = socket.socket()
 s.bind(addr)
 s.listen(1)
 
-print('listening on', addr)
+# print('listening on', addr)
 
 def send_request(msg):
     try:
         cl, addr = s.accept()
-        print('client connected from', addr)
+        # print('client connected from', addr)
         request = cl.recv(1024)
-        print(request)
+        # print(request)
         
         response = msg
 
         cl.send(response)
-        print("Sent:" + response)
+        # print("Sent:" + response)
         cl.close()
 
     except OSError as e:
         cl.close()
-        print('connection closed')
+        # print('connection closed')
     
 # *
 # * CAPACITIVE TOUCH
@@ -188,9 +199,6 @@ class Device:
     def level(self, channel):
         return self.channels[channel].level
 
-# turn board LED on
-led = machine.Pin("LED", machine.Pin.OUT)
-led.value(1)
 # motor pin
 pwm = machine.PWM(machine.Pin(28))
 pwm.freq(1000)
@@ -203,23 +211,27 @@ def main():
     touched = False
     with (Device(caps)) as touch:
         while True:
-            touch.update()
-            print('\r', end='')
-            for c in touch.channels:
-                if (c.level > 0.5):
-                    touched = True
-                elif (not touched and c.level <= 0.5):
-                    touched = False
-            if touched:
-                print(c.level)
-                scale = min(PWM_MAX, int(c.level*PWM_MAX))
-                send_request(str(scale))
-                pwm.duty_u16(scale)
-                
-            time.sleep(0.1)
+            if is_connnected:
+                touch.update()
+                # print('\r', end='')
+                for c in touch.channels:
+                    if (c.level > 0.5):
+                        touched = True
+                    elif (not touched and c.level <= 0.5):
+                        touched = False
+                if touched:
+                    # print(c.level)
+                    scale = min(PWM_MAX, int(c.level*PWM_MAX))
+                    send_request(str(scale))
+                    pwm.duty_u16(scale)
+                    
+                time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
+
+
+
 
 
 
