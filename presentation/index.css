@@ -20,6 +20,7 @@ body {
   text-shadow: var(--shadow-color) -2px 2px 8px;
   margin: 0 auto;
   cursor: pointer;
+  font-size: 24px;
 }
 
 div {
@@ -41,7 +42,6 @@ a:hover {
 }
 
 h2 {
-  font-size: 26px;
   font-weight: 700;
   line-height: 26px;
   margin: 0 0 12px;
