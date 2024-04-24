@@ -8,15 +8,16 @@ window.addEventListener("load", () => {
   let infos = [];
   let interval;
   let index = 0;
-  fetch("media.json").then((r)=>r.json()).then((d)=>
-  {
+
+  fetch("media.json").then((r)=>r.json()).then((d) => {
     infos=Array.from(d);
     document.addEventListener('click', start, {passive: false});
   });
 
   function start(e) {
     e.preventDefault();
-    interval = setInterval(createWindow, 5000);
+    if (index == 0) createWindow();
+    else interval = setInterval(createWindow, 5000);
   }
 
   function createWindow() {
