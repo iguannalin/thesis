@@ -28,7 +28,7 @@ window.addEventListener("load", () => {
     window.open(blobUrl, '_blank', `location=0,menubar=0,status=0,scrollbars=0,toolbar=0,resizable=0,popup,width=${sq},height=${sq},left=${getRandomInt(0,screen.width)},top=${getRandomInt(0,screen.height)}`);
     window.URL.revokeObjectURL(blobUrl);
     index++;
-    if (index == 1) interval = setInterval(createWindow, 20);
+    if (index == 1) interval = setInterval(createWindow, 5000);
     console.log({index, infos});
     if (index >= infos.length) 
       clearInterval(interval);
