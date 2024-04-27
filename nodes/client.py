@@ -23,7 +23,7 @@ wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(ssid, password)
 while not wlan.isconnected() and wlan.status() >= 0:
-    # print("Waiting to connect:")
+    print("Waiting to connect:")
     led.value(1)
     time.sleep(1)
     led.value(0)
@@ -32,7 +32,7 @@ while not wlan.isconnected() and wlan.status() >= 0:
 wlan.status() # 3 == success
 wlan.ifconfig()
 led.value(1)
-# print(wlan.ifconfig())
+print(wlan.ifconfig()[0][-1])
 
 # *
 # * CAPACITIVE TOUCH
@@ -173,16 +173,23 @@ def main():
         # Create a socket and make a HTTP request
         s = socket.socket() # Open socket
         s.connect(addr)
-        ss=str(s.recv(512))[2:-1] # Store reply
-        # Print what we received
-        # print(ss)
-        
-        pwm.duty_u16(int(ss))
-        if (int(ss) > 1000):
-            s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
+        s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
+        ss=str(s.recv(512)) # Store reply
+        print(ss)
+        if ss:
+            ss=ss[2:-1] # Store reply
+            # Print what we received
+            # print(ss)
+            if (int(ss) > 1000):
+                pwm.duty_u16(int(ss))
+            else:
+                pwm.duty_u16(0)
         s.close()          # Close socket
-        time.sleep(0.01)
+        time.sleep(0.07)
 
 if __name__ == '__main__':
     main()
+
+
+
 
