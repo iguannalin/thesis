@@ -1,4 +1,4 @@
-# Save this as main.py on the pico that will be the server node
+# Save this as main.py on the pico that will be the SERVER node
 
 # Program to read RGB values from a local Pico Web Server:
 # Tony Goodhew 5th July 2022
@@ -62,7 +62,7 @@ def send_request(msg):
         cl, addr = s.accept()
         print('client connected from', addr)
         request = cl.recv(1024)
-        # print(request)
+        print(request)
         
         response = msg
 
@@ -229,6 +229,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
 
