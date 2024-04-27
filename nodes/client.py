@@ -23,7 +23,7 @@ wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(ssid, password)
 while not wlan.isconnected() and wlan.status() >= 0:
-    print("Waiting to connect:")
+    # print("Waiting to connect:")
     led.value(1)
     time.sleep(1)
     led.value(0)
@@ -32,7 +32,7 @@ while not wlan.isconnected() and wlan.status() >= 0:
 wlan.status() # 3 == success
 wlan.ifconfig()
 led.value(1)
-print(wlan.ifconfig()[0][-1])
+# print(wlan.ifconfig()[0][-1])
 
 # *
 # * CAPACITIVE TOUCH
@@ -175,7 +175,7 @@ def main():
         s.connect(addr)
         s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
         ss=str(s.recv(512)) # Store reply
-        print(ss)
+        # print(ss)
         if ss:
             ss=ss[2:-1] # Store reply
             # Print what we received
@@ -189,7 +189,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
