@@ -62,7 +62,7 @@ def send_request(msg):
         cl, addr = s.accept()
         #print('client connected from', addr)
         request = cl.recv(1024)
-        #print(request)
+        print(request)
         
         response = msg
 
@@ -201,7 +201,9 @@ class Device:
 
 # motor pin
 pwm = machine.PWM(machine.Pin(28))
+pwm2 = machine.PWM(machine.Pin(27))
 pwm.freq(1000)
+pwm2.freq(1000)
 # cap. touch pins
 caps = [0, 4]
 PWM_MAX = 65025
@@ -224,9 +226,9 @@ def main():
                     scale = min(PWM_MAX, int(c.level*PWM_MAX))
                     send_request(str(scale))
                     pwm.duty_u16(scale)
+                    pwm2.duty_u16(scale)
                     
                 time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
-

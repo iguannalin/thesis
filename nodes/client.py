@@ -160,32 +160,55 @@ class Device:
 
 # motor pin
 pwm = machine.PWM(machine.Pin(28))
+pwm2 = machine.PWM(machine.Pin(27))
 pwm.freq(1000)
+pwm2.freq(1000)
 # cap. touch pins
 caps = [0, 4]
 PWM_MAX = 65025
 
 # self test
 def main():
-    while True:
-        addr = socket.getaddrinfo("192.168.1.3", 80)[0][-1] # Address of Web Server
+    with (Device(caps)) as touch:
+        while True:
+            addr = socket.getaddrinfo("192.168.1.3", 80)[0][-1] # Address of Web Server
 
-        # Create a socket and make a HTTP request
-        s = socket.socket() # Open socket
-        s.connect(addr)
-        s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
-        ss=str(s.recv(512)) # Store reply
-        # print(ss)
-        if ss:
-            ss=ss[2:-1] # Store reply
-            # Print what we received
+            # Create a socket and make a HTTP request
+            s = socket.socket() # Open socket
+            s.connect(addr)
+            s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
+            ss=str(s.recv(512)) # Store reply
             # print(ss)
-            if (int(ss) > 1000):
-                pwm.duty_u16(int(ss))
+
+            # Listen for messages from SERVER
+            if ss:
+                ss=ss[2:-1] # Store reply
+                # Print what we received
+                # print(ss)
+                if (int(ss) > 1000):
+                    pwm.duty_u16(int(ss))
+                    pwm2.duty_u16(int(ss))
+                else:
+                    pwm.duty_u16(0)
+                    pwm2.duty_u16(0)
+
+            # Otherwise, listen for touch and send to SERVER
             else:
-                pwm.duty_u16(0)
-        s.close()          # Close socket
-        time.sleep(0.07)
+                touch.update()
+                #print('\r', end='')
+                for c in touch.channels:
+                    if (c.level > 0.5):
+                        touched = True
+                    elif (not touched and c.level <= 0.5):
+                        touched = False
+                if touched:
+                    #print(c.level)
+                    scale = min(PWM_MAX, int(c.level*PWM_MAX))
+                    send_request(str(scale))
+                    pwm.duty_u16(scale)
+                    pwm2.duty_u16(scale)
+            s.close()          # Close socket
+            time.sleep(0.07)
 
 if __name__ == '__main__':
     main()
