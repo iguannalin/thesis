@@ -67,7 +67,7 @@ def send_request(msg):
         response = msg
 
         cl.send(response)
-        #print("Sent:" + response)
+        print("Sent:" + response)
         cl.close()
 
     except OSError as e:
@@ -232,3 +232,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+

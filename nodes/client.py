@@ -169,6 +169,7 @@ PWM_MAX = 65025
 
 # self test
 def main():
+    touched = False
     with (Device(caps)) as touch:
         while True:
             addr = socket.getaddrinfo("192.168.1.3", 80)[0][-1] # Address of Web Server
@@ -184,31 +185,33 @@ def main():
             if ss:
                 ss=ss[2:-1] # Store reply
                 # Print what we received
-                # print(ss)
                 if (int(ss) > 1000):
+                    print('received: ', ss)
                     pwm.duty_u16(int(ss))
                     pwm2.duty_u16(int(ss))
                 else:
                     pwm.duty_u16(0)
                     pwm2.duty_u16(0)
+                    touch.update()
+                    print('received zero ', ss)
+                    #print('\r', end='')
+                    for c in touch.channels:
+                        print(c.level)
+                        if (c.level > 0.5):
+                            touched = True
+                        elif (not touched and c.level <= 0.5):
+                            touched = False
+                    # Otherwise, listen for touch and send to SERVER
+                    if touched:
+                        scale = min(PWM_MAX, int(c.level*PWM_MAX))
+                        pwm.duty_u16(scale)
+                        pwm2.duty_u16(scale)
+                        print('sent: ', scale)
+                        s.send(b"" + str(scale))
 
-            # Otherwise, listen for touch and send to SERVER
-            else:
-                touch.update()
-                #print('\r', end='')
-                for c in touch.channels:
-                    if (c.level > 0.5):
-                        touched = True
-                    elif (not touched and c.level <= 0.5):
-                        touched = False
-                if touched:
-                    #print(c.level)
-                    scale = min(PWM_MAX, int(c.level*PWM_MAX))
-                    send_request(str(scale))
-                    pwm.duty_u16(scale)
-                    pwm2.duty_u16(scale)
             s.close()          # Close socket
-            time.sleep(0.07)
+            time.sleep(0.03)
 
 if __name__ == '__main__':
     main()
+
