@@ -169,10 +169,12 @@ PWM_MAX = 65025
 
 # self test
 def main():
+    pwm.duty_u16(PWM_MAX)
+    pwm2.duty_u16(PWM_MAX)
     touched = False
     with (Device(caps)) as touch:
         while True:
-            addr = socket.getaddrinfo("192.168.1.3", 80)[0][-1] # Address of Web Server
+            addr = socket.getaddrinfo("192.168.1.7", 80)[0][-1] # Address of Web Server
 
             # Create a socket and make a HTTP request
             s = socket.socket() # Open socket
@@ -214,4 +216,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
