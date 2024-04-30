@@ -76,11 +76,16 @@ def send_request(msg):
     
 # self test
 def main():
+    off = False
     while True:
-        send_request(str(65025))
+        if off:
+            send_request(str(0))
+            off = False
+        else:
+            send_request(str(65025))
+            off = True
         time.sleep(5)
 
 if __name__ == '__main__':
     main()
-
 

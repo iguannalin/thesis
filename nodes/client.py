@@ -169,8 +169,6 @@ PWM_MAX = 65025
 
 # self test
 def main():
-    pwm.duty_u16(PWM_MAX)
-    pwm2.duty_u16(PWM_MAX)
     touched = False
     with (Device(caps)) as touch:
         while True:
@@ -187,7 +185,8 @@ def main():
             if ss:
                 ss=ss[2:-1] # Store reply
                 # Print what we received
-                if (int(ss) > 1000):
+                print(ss)
+                if (int(ss)):
                     print('received: ', ss)
                     pwm.duty_u16(int(ss))
                     pwm2.duty_u16(int(ss))
@@ -210,11 +209,10 @@ def main():
                         pwm2.duty_u16(scale)
                         print('sent: ', scale)
                         s.send(b"" + str(scale))
+                    
 
             s.close()          # Close socket
             time.sleep(0.03)
 
 if __name__ == '__main__':
     main()
-
-
