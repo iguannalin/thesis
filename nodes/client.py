@@ -172,7 +172,7 @@ def main():
     touched = False
     with (Device(caps)) as touch:
         while True:
-            addr = socket.getaddrinfo("192.168.1.7", 80)[0][-1] # Address of Web Server
+            addr = socket.getaddrinfo("192.168.1.5", 80)[0][-1] # Address of Web Server
 
             # Create a socket and make a HTTP request
             s = socket.socket() # Open socket
@@ -183,13 +183,14 @@ def main():
 
             # Listen for messages from SERVER
             if ss:
-                ss=ss[2:-1] # Store reply
                 # Print what we received
                 print(ss)
-                if (int(ss)):
-                    print('received: ', ss)
-                    pwm.duty_u16(int(ss))
-                    pwm2.duty_u16(int(ss))
+                if len(ss)>3:
+                    ss=ss[2:-1] # Store reply
+                    if int(ss):
+                        print('received: ', ss)
+                        pwm.duty_u16(int(ss))
+                        pwm2.duty_u16(int(ss))
                 else:
                     pwm.duty_u16(0)
                     pwm2.duty_u16(0)
