@@ -182,10 +182,7 @@ def main():
                 s.send(b"touched") # Send request
                 touched = False
             ss=str(s.recv(512)) # Store reply
-            # print(ss)
             if ss:
-                # ss=ss[2:-1] # Store reply
-                # Print what we received
                 print(ss)
                 if "touched" in ss:
                     pwm.duty_u16(scale)
@@ -201,6 +198,7 @@ def main():
             print("listening for touch")
             touch.update()
             print('\r', end='')
+            # if touched, set boolean to true, and send to server on the next turn
             for c in touch.channels:
                 if (c.level > 0.5):
                     touched = True
