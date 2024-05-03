@@ -166,31 +166,30 @@ pwm2.freq(1000)
 # cap. touch pins
 caps = [0, 4]
 PWM_MAX = 65025
-bars = ['⠀', '⡀', '⣀', '⣄', '⣤', '⣦', '⣶', '⣷', '⣿']
+
 # self test
 def main():
-    with (Device((0, 4, 8, 12))) as touch:
-        while True:
+    while True:
+        addr = socket.getaddrinfo("192.168.1.6", 80)[0][-1] # Address of Web Server
 
-            addr = socket.getaddrinfo("192.168.1.2", 80)[0][-1] # Address of Web Server
-
-            # Create a socket and make a HTTP request
-            s = socket.socket() # Open socket
-            s.connect(addr)
-            s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
-            ss=str(s.recv(512)) # Store reply
-            print(ss)
-
-            touch.update()
-            
-            print('\r', end='')
-            for c in touch.channels:
-                print(f'   {bars[min(len(bars)-1, int(c.level * len(bars)))]}', end='')
-            
-            
-            s.close()          # Close socket
-            time.sleep(0.5)    # wait
-            
+        # Create a socket and make a HTTP request
+        s = socket.socket() # Open socket
+        s.connect(addr)
+        s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
+        ss=str(s.recv(512)) # Store reply
+        # print(ss)
+        if ss:
+            ss=ss[2:-1] # Store reply
+            # Print what we received
+            # print(ss)
+            if (int(ss) > 1000):
+                pwm.duty_u16(int(ss))
+                pwm2.duty_u16(int(ss))
+            else:
+                pwm.duty_u16(0)
+                pwm2.duty_u16(0)
+        s.close()          # Close socket
+        time.sleep(0.07)
 
 if __name__ == '__main__':
     main()
