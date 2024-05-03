@@ -166,54 +166,31 @@ pwm2.freq(1000)
 # cap. touch pins
 caps = [0, 4]
 PWM_MAX = 65025
-
+bars = ['⠀', '⡀', '⣀', '⣄', '⣤', '⣦', '⣶', '⣷', '⣿']
 # self test
 def main():
-    touched = False
-    with (Device(caps)) as touch:
+    with (Device((0, 4, 8, 12))) as touch:
         while True:
-            addr = socket.getaddrinfo("192.168.1.5", 80)[0][-1] # Address of Web Server
+
+            addr = socket.getaddrinfo("192.168.1.2", 80)[0][-1] # Address of Web Server
 
             # Create a socket and make a HTTP request
             s = socket.socket() # Open socket
             s.connect(addr)
             s.send(b"HI from " + wlan.ifconfig()[0][-1]) # Send request
             ss=str(s.recv(512)) # Store reply
-            # print(ss)
+            print(ss)
 
-            # Listen for messages from SERVER
-            if ss:
-                # Print what we received
-                print(ss)
-                if len(ss)>3:
-                    ss=ss[2:-1] # Store reply
-                    if int(ss):
-                        print('received: ', ss)
-                        pwm.duty_u16(int(ss))
-                        pwm2.duty_u16(int(ss))
-                else:
-                    pwm.duty_u16(0)
-                    pwm2.duty_u16(0)
-                    touch.update()
-                    print('received zero ', ss)
-                    #print('\r', end='')
-                    for c in touch.channels:
-                        print(c.level)
-                        if (c.level > 0.5):
-                            touched = True
-                        elif (not touched and c.level <= 0.5):
-                            touched = False
-                    # Otherwise, listen for touch and send to SERVER
-                    if touched:
-                        scale = min(PWM_MAX, int(c.level*PWM_MAX))
-                        pwm.duty_u16(scale)
-                        pwm2.duty_u16(scale)
-                        print('sent: ', scale)
-                        s.send(b"" + str(scale))
-                    
-
+            touch.update()
+            
+            print('\r', end='')
+            for c in touch.channels:
+                print(f'   {bars[min(len(bars)-1, int(c.level * len(bars)))]}', end='')
+            
+            
             s.close()          # Close socket
-            time.sleep(0.03)
+            time.sleep(0.5)    # wait
+            
 
 if __name__ == '__main__':
     main()

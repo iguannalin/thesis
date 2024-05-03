@@ -55,37 +55,39 @@ s = socket.socket()
 s.bind(addr)
 s.listen(1)
 
-#print('listening on', addr)
-
-def send_request(msg):
-    try:
-        cl, addr = s.accept()
-        print('client connected from', addr)
-        request = cl.recv(1024)
-        print(request)
-        
-        response = msg
-
-        cl.send(response)
-        print("Sent:" + response)
-        cl.close()
-
-    except OSError as e:
-        cl.close()
-        print('connection closed')
-    
+print('listening on', addr)
+addresses = []
+bars = ['⠀', '⡀', '⣀', '⣄', '⣤', '⣦', '⣶', '⣷', '⣿']
 # self test
 def main():
-    off = False
     while True:
-        if off:
-            send_request(str(0))
-            off = False
-        else:
-            send_request(str(65025))
-            off = True
-        time.sleep(5)
+        try:
+            cl, addr = s.accept()
+            add = addr[0]
+            if (add in addresses):
+                print('client connected from', add)
+            else:
+                print('new client', add)
+                addresses.append(add)
+
+            request = cl.recv(1024)
+            # c = int(request)
+            #print(f'   {bars[min(len(bars)-1, int(c * len(bars)))]}', end='')
+            print(request)
+            print("addresses", addresses)
+            cl.send("HI")
+            
+            # response = msg
+
+            # cl.send(response)
+            # print("Sent:" + response)
+            cl.close()
+
+        except OSError as e:
+            cl.close()
+            print('connection closed')
 
 if __name__ == '__main__':
     main()
+
 
