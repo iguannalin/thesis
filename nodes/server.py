@@ -88,14 +88,15 @@ def listen():
         # send touch to random client that is not the touched client
         if ("touched" in request):
             addy = random.choice(addies)
-            baddy = baddies[0]
-            while addy != addr[0] and len(addies) > 1:
-                addy = random.choice(addies)
-                for x,_ in baddies:
-                    if x == addy:
-                        baddy = (x,_)
+            baddy = baddies[0] # placeholder
+            while addy == addr[0] and len(addies) > 1:
+                 addy = random.choice(addies)
+            for x,_ in baddies:
+                if x == addy:
+                    baddy = (x,_)
             if (addy != addr[0]):
-                ping_client("touched", baddy)
+                ping_client(" touched ", baddy)
+                print(addr[0], " touched ", baddy)
         cl.close()
 
     except OSError as e:

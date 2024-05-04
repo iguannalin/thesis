@@ -202,19 +202,20 @@ def main():
             else:
                 print("listening for touch")
                 touch.update()
-                print('\r', end='')
+                # print('\r', end='')
                 # if touched, set boolean to true, and send to server on the next turn
                 for c in touch.channels:
                     print(c.level)
                     if (c.level > 0.5):
                         touched = True
-                        scale = min(PWM_MAX, int(c.level*PWM_MAX))
                     # elif (not touched and c.level <= 0.5):
                     else:
                         touched = False
+                    scale = min(PWM_MAX, int(c.level*PWM_MAX))
 
             alternate = not alternate
             time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
+
