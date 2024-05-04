@@ -164,51 +164,57 @@ pwm2 = machine.PWM(machine.Pin(27), freq=50)
 # cap. touch pins
 caps = [0, 4]
 PWM_MAX = 65025
-alternate = True
-scale = 0
 
 # self test
 def main():
-    while True:
-        # alternate between listening to server or listening for touch
-        # listen to server
-        if alternate:
-            addr = socket.getaddrinfo("192.168.12.137", 80)[0][-1] # Address of Web Server
-            print("listening to server")
-            # Create a socket and make a HTTP request
-            s = socket.socket() # Open socket
-            s.connect(addr)
-            if touched:
-                s.send(b"touched") # Send request
-                touched = False
-            ss=str(s.recv(512)) # Store reply
-            if ss:
-                print(ss)
-                if "touched" in ss:
+    scale = 0
+    alternate = True
+    touched = False
+    with (Device(caps)) as touch:
+        while True:
+            # alternate between listening to server or listening for touch
+            print(alternate)
+            # listen to server
+            if alternate:
+                addr = socket.getaddrinfo("192.168.1.2", 80)[0][-1] # Address of Web Server
+                print("listening to server")
+                # Create a socket and make a HTTP request
+                s = socket.socket() # Open socket
+                s.connect(addr)
+                if touched:
+                    s.send(b"touched") # Send request
+                    touched = False
+                else:
+                    s.send(b"HI")
+                ss=str(s.recv(512)) # Store reply
+                if ss:
+                    print(ss)
+                    if "touched" in ss:
+                        pwm.duty_u16(scale)
+                        pwm2.duty_u16(scale)
+                        scale = 0
+                    time.sleep(3) # buzz for 3 seconds
                     pwm.duty_u16(scale)
                     pwm2.duty_u16(scale)
-                    scale = 0
-                time.sleep(3) # buzz for 3 seconds
-                pwm.duty_u16(scale)
-                pwm2.duty_u16(scale)
-            s.close()          # Close socket
+                s.close()          # Close socket
 
-        # listen for touch
-        else:
-            print("listening for touch")
-            touch.update()
-            print('\r', end='')
-            # if touched, set boolean to true, and send to server on the next turn
-            for c in touch.channels:
-                if (c.level > 0.5):
-                    touched = True
-                    scale = min(PWM_MAX, int(c.level*PWM_MAX))
-                # elif (not touched and c.level <= 0.5):
-                else:
-                    touched = False
+            # listen for touch
+            else:
+                print("listening for touch")
+                touch.update()
+                print('\r', end='')
+                # if touched, set boolean to true, and send to server on the next turn
+                for c in touch.channels:
+                    print(c.level)
+                    if (c.level > 0.5):
+                        touched = True
+                        scale = min(PWM_MAX, int(c.level*PWM_MAX))
+                    # elif (not touched and c.level <= 0.5):
+                    else:
+                        touched = False
 
-        alternate = not alternate
-        time.sleep(0.01)
+            alternate = not alternate
+            time.sleep(0.1)
 
 if __name__ == '__main__':
     main()

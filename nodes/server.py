@@ -56,54 +56,61 @@ s = socket.socket()
 s.bind(addr)
 s.listen(1)
 
+addies = []
+baddies = []
+
 print('listening on', addr)
 
 def ping_client(msg, addy):
+    print("pinging client", addy)
     try:
         cl = s.connect(addy)
         s.sendto(msg, addy)
         cl.send(response)
         print("Sent:" + response)
-        cl.close()
+        # cl.close()
 
     except OSError as e:
-        cl.close()
-        #print('connection closed')
+        # cl.close()
+        print('connection closed')
 
 def listen():
     try:
         cl, addr = s.accept()
         print('client connected from', addr)
-        print("addresses", addresses)
-        if (addr[0] not in addresses):
-            addresses.append(addr[0])
+        if (addr[0] not in addies):
+            addies.append(addr[0])
+            baddies.append(addr)
+        print("addies", addies)
         request = cl.recv(1024)
         print(request)
+        
+        # send touch to random client that is not the touched client
         if ("touched" in request):
-            addy = random.choice(addresses)
-            while addy != addr[0] and len(addresses) > 1:
-                addy = random.choice(addresses)
-            # send touch to random client that is not the touched client
-            ping_client("touched", addy)
-        cl.send(response)
-        print("Sent:" + response)
+            addy = random.choice(addies)
+            baddy = baddies[0]
+            while addy != addr[0] and len(addies) > 1:
+                addy = random.choice(addies)
+                for x,_ in baddies:
+                    if x == addy:
+                        baddy = (x,_)
+            if (addy != addr[0]):
+                ping_client("touched", baddy)
         cl.close()
 
     except OSError as e:
         cl.close()
         #print('connection closed')
 
-addresses = []
 # self test
 def main():
     touched = False
     while True:
         if is_connnected:
             listen()
-            for add in addresses:
+            for add in baddies:
                 ping_client("", add)
             time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
-
