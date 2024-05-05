@@ -96,7 +96,7 @@ def listen():
                     baddy = (x,_)
             if (addy != addr[0]):
                 ping_client(" touched ", baddy)
-                print(addr[0], " touched ", baddy)
+                print("*** ", addr[0], " touched ", baddy)
         cl.close()
 
     except OSError as e:
@@ -115,3 +115,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+

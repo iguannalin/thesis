@@ -192,8 +192,8 @@ def main():
                     if "touched" in ss:
                         pwm.duty_u16(scale)
                         pwm2.duty_u16(scale)
-                        scale = 0
                         time.sleep(3) # buzz for 3 seconds
+                        scale = 0
                     pwm.duty_u16(scale)
                     pwm2.duty_u16(scale)
                 s.close()          # Close socket
