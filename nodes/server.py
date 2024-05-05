@@ -225,6 +225,14 @@ def main():
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
                     else:
+                        try:
+                            cl, addr = s.accept()
+                            request = cl.recv(1024)
+                            cl.send("Hi from server")
+                            cl.close()
+                        except OSError as e:
+                            # cl.close()
+                            print('could not reach ')
                         pwm.duty_u16(0)
                         pwm2.duty_u16(0)
                 
@@ -233,4 +241,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
