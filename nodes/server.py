@@ -61,6 +61,11 @@ baddies = []
 
 print('listening on', addr)
 
+def findBaddy(addy):
+    for x,_ in baddies:
+        if x == addy:
+            return(x,_)
+
 def ping_client(msg, addy):
     print("pinging client", addy)
     try:
@@ -68,11 +73,14 @@ def ping_client(msg, addy):
         s.sendto(msg, addy)
         cl.send(response)
         print("Sent:" + response)
-        # cl.close()
+        cl.close()
 
     except OSError as e:
-        # cl.close()
-        print('connection closed')
+        cl.close()
+        print('could not reach ', addy)
+        addies.remove(addy)
+        baddies.remove(findBaddy(addy))
+        print("--removed--", addies)
 
 def listen():
     try:
@@ -88,20 +96,16 @@ def listen():
         # send touch to random client that is not the touched client
         if ("touched" in request):
             addy = random.choice(addies)
-            baddy = baddies[0] # placeholder
-            while addy == addr[0] and len(addies) > 1:
-                 addy = random.choice(addies)
-            for x,_ in baddies:
-                if x == addy:
-                    baddy = (x,_)
-            if (addy != addr[0]):
-                ping_client(" touched ", baddy)
-                print("*** ", addr[0], " touched ", baddy)
+            baddy = baddies[0]
+            while addy != addr[0] and len(addies) > 1:
+                addy = random.choice(addies)
+                baddy = findBaddy(addy)
+            ping_client(addr[0], " touched ", baddy)
         cl.close()
 
     except OSError as e:
         cl.close()
-        #print('connection closed')
+        print('connection closed')
 
 # self test
 def main():
@@ -109,11 +113,10 @@ def main():
     while True:
         if is_connnected:
             listen()
-            for add in baddies:
-                ping_client("", add)
+            for badd in baddies:
+                ping_client("", badd)
             time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
-
 

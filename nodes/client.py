@@ -32,7 +32,6 @@ while not wlan.isconnected() and wlan.status() >= 0:
 wlan.status() # 3 == success
 wlan.ifconfig()
 led.value(1)
-# print(wlan.ifconfig()[0][-1])
 
 # *
 # * CAPACITIVE TOUCH
@@ -173,10 +172,9 @@ def main():
     with (Device(caps)) as touch:
         while True:
             # alternate between listening to server or listening for touch
-            print(alternate)
             # listen to server
             if alternate:
-                addr = socket.getaddrinfo("192.168.1.2", 80)[0][-1] # Address of Web Server
+                addr = socket.getaddrinfo("192.168.12.176", 80)[0][-1] # Address of Web Server
                 print("listening to server")
                 # Create a socket and make a HTTP request
                 s = socket.socket() # Open socket
@@ -185,36 +183,33 @@ def main():
                     s.send(b"touched") # Send request
                     touched = False
                 else:
-                    s.send(b"HI")
+                    s.send(b"Hi from " + wlan.ifconfig()[0][-1])
                 ss=str(s.recv(512)) # Store reply
                 if ss:
                     print(ss)
                     if "touched" in ss:
-                        pwm.duty_u16(scale)
-                        pwm2.duty_u16(scale)
+                        pwm.duty_u16(PWM_MAX)
+                        pwm2.duty_u16(PWM_MAX)
                         time.sleep(3) # buzz for 3 seconds
                         scale = 0
-                    pwm.duty_u16(scale)
-                    pwm2.duty_u16(scale)
+                    else:
+                        pwm.duty_u16(0)
+                        pwm2.duty_u16(0)
                 s.close()          # Close socket
 
             # listen for touch
             else:
                 print("listening for touch")
                 touch.update()
-                # print('\r', end='')
                 # if touched, set boolean to true, and send to server on the next turn
                 for c in touch.channels:
                     print(c.level)
-                    if (c.level > 0.5):
+                    if (c.level > 0.1):
                         touched = True
-                    # elif (not touched and c.level <= 0.5):
-                    else:
-                        touched = False
-                    scale = min(PWM_MAX, int(c.level*PWM_MAX))
+                        scale = min(PWM_MAX, int(c.level*PWM_MAX))
 
             alternate = not alternate
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
