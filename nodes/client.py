@@ -23,7 +23,7 @@ wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect(ssid, password)
 while not wlan.isconnected() and wlan.status() >= 0:
-    print("Waiting to connect:")
+    # print("Waiting to connect:")
     led.value(1)
     time.sleep(1)
     led.value(0)
@@ -174,11 +174,11 @@ def main():
             # alternate between listening to server or listening for touch
             # listen for touch
             if alternate:
-                print("listen for touch")
+                # print("listen for touch")
                 touch.update()
                 # if touched, set boolean to true, and send to server on the next turn
                 for c in touch.channels:
-                    print(c.level)
+                    # print(c.level)
                     if (c.level > 0.5):
                         touched = True
                         pwm.duty_u16(PWM_MAX)
@@ -187,25 +187,25 @@ def main():
             else:
                 # TODO change ip address for server
                 addr = socket.getaddrinfo("192.168.12.137", 80)[0][-1] # Address of Web Server
-                print("listening to server")
+                # print("listening to server")
                 # Create a socket and make a HTTP request
                 s = socket.socket() # Open socket
                 s.connect(addr)
                 if touched:
-                    print("touch sent")
+                    # print("touch sent")
                     s.send('touch') # Send request
                     ss = str(s.recv(512)) # Store reply
                     touched = False
                 else:
-                    print("not touched")
+                    # print("not touched")
                     pwm.duty_u16(0)
                     pwm2.duty_u16(0)
                     s.send('Hi from ' + wlan.ifconfig()[0][-3:])
                     ss = str(s.recv(512)) # Store reply
                 if ss:
-                    print(ss)
+                    # print(ss)
                     if "touch" in ss:
-                        print("touch received")
+                        # print("touch received")
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
                         time.sleep(2) # buzz for 1 second
