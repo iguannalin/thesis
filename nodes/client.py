@@ -173,22 +173,23 @@ def main():
             # alternate between listening to server or listening for touch
             # listen to server
             if alternate:
+                led.value(1)
                 addr = socket.getaddrinfo("192.168.12.176", 80)[0][-1] # Address of Web Server
-                print("listening to server")
+                # print("listening to server")
                 # Create a socket and make a HTTP request
                 s = socket.socket() # Open socket
                 s.connect(addr)
                 if touched:
-                    print("touched")
+                    # print("touched")
                     s.send(b"touched") # Send request
                     touched = False
                 else:
-                    s.send(b"Hi from " + wlan.ifconfig()[0][-3])
+                    s.send(b"Hi from " + wlan.ifconfig()[0][-3:])
                 ss = str(s.recv(512)) # Store reply
                 if ss:
-                    print(ss)
+                    # print(ss)
                     if "touched" in ss:
-                        print("touch received")
+                        # print("touch received")
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
                         time.sleep(3) # buzz for 3 seconds
@@ -199,18 +200,23 @@ def main():
 
             # listen for touch
             else:
-                print("listening for touch")
+                # print("listening for touch")
                 touch.update()
                 # if touched, set boolean to true, and send to server on the next turn
                 for c in touch.channels:
-                    print(c.level)
+                    # print(c.level)
                     if (c.level > 0.5):
                         touched = True
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
 
             alternate = not alternate
+            led.value(0)
             time.sleep(0.03)
 
 if __name__ == '__main__':
     main()
+
+
+
+
