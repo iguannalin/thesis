@@ -166,7 +166,6 @@ PWM_MAX = 65025
 
 # self test
 def main():
-    scale = 0
     alternate = True
     touched = False
     with (Device(caps)) as touch:
@@ -184,14 +183,15 @@ def main():
                     touched = False
                 else:
                     s.send(b"Hi from " + wlan.ifconfig()[0][-1])
-                ss=str(s.recv(512)) # Store reply
+                ss = str(s.recv(512)) # Store reply
                 if ss:
                     print(ss)
                     if "touched" in ss:
+                        print("touch received")
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
                         time.sleep(3) # buzz for 3 seconds
-                        scale = 0
+
                     else:
                         pwm.duty_u16(0)
                         pwm2.duty_u16(0)
@@ -206,12 +206,15 @@ def main():
                     print(c.level)
                     if (c.level > 0.1):
                         touched = True
-                        scale = min(PWM_MAX, int(c.level*PWM_MAX))
+                        pwm.duty_u16(PWM_MAX)
+                        pwm2.duty_u16(PWM_MAX)
 
             alternate = not alternate
-            time.sleep(0.01)
+            time.sleep(0.02)
 
 if __name__ == '__main__':
     main()
+
+
 
 

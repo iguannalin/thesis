@@ -56,8 +56,8 @@ s = socket.socket()
 s.bind(addr)
 s.listen(1)
 
-addies = []
-baddies = []
+addies = [] # addresses i.e. 192.x.x
+baddies = [] # tuples i.e. (192.x.x, 60530)
 
 print('listening on', addr)
 
@@ -66,41 +66,38 @@ def findBaddy(addy):
         if x == addy:
             return(x,_)
 
-def ping_client(msg, addy):
-    print("pinging client", addy)
+def ping_client(msg, baddy):
+    print("pinging client", baddy)
     try:
-        cl = s.connect(addy)
-        s.sendto(msg, addy)
+        cl = s.connect(baddy)
+        s.sendto(msg, baddy)
         cl.send(response)
         print("Sent:" + response)
         cl.close()
 
     except OSError as e:
-        cl.close()
-        print('could not reach ', addy)
-        addies.remove(addy)
-        baddies.remove(findBaddy(addy))
-        print("--removed--", addies)
+        # cl.close()
+        print('could not reach ', baddy)
 
 def listen():
     try:
         cl, addr = s.accept()
-        print('client connected from', addr)
         if (addr[0] not in addies):
             addies.append(addr[0])
             baddies.append(addr)
-        print("addies", addies)
+        print("addies ", addies)
         request = cl.recv(1024)
         print(request)
         
         # send touch to random client that is not the touched client
         if ("touched" in request):
-            addy = random.choice(addies)
-            baddy = baddies[0]
-            while addy != addr[0] and len(addies) > 1:
-                addy = random.choice(addies)
+            if len(addies) > 1:
+                aIndex = addies.index(addr[0])
+                addy = random.choice(addies[:aIndex-1]+addies[:aIndex])
                 baddy = findBaddy(addy)
-            ping_client(addr[0], " touched ", baddy)
+                ping_client("touched", baddy)
+                print("***", addr[0], " touched ", baddy)
+            
         cl.close()
 
     except OSError as e:
@@ -113,10 +110,11 @@ def main():
     while True:
         if is_connnected:
             listen()
-            for badd in baddies:
-                ping_client("", badd)
+            # for badd in baddies:
+            #     ping_client("", badd)
             time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
+
 
