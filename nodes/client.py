@@ -168,42 +168,13 @@ PWM_MAX = 65025
 def main():
     alternate = True
     touched = False
+    request = ""
     with (Device(caps)) as touch:
         while True:
             # alternate between listening to server or listening for touch
-            # listen to server
-            if alternate:
-                # TODO change ip address for server
-                addr = socket.getaddrinfo("192.168.12.137", 80)[0][-1] # Address of Web Server
-                print("listening to server")
-                # Create a socket and make a HTTP request
-                s = socket.socket() # Open socket
-                s.connect(addr)
-                if touched:
-                    print("touched")
-                    s.send(b"touched") # Send request
-                    touched = False
-                else:
-                    print("not touched")
-                    pwm.duty_u16(0)
-                    pwm2.duty_u16(0)
-                    s.send(b"Hi from " + wlan.ifconfig()[0][-3:])
-                ss = str(s.recv(512)) # Store reply
-                if ss:
-                    print(ss)
-                    if "touch" in ss:
-                        print("touch received")
-                        pwm.duty_u16(PWM_MAX)
-                        pwm2.duty_u16(PWM_MAX)
-                        time.sleep(1) # buzz for 1 second
-                    else:
-                        pwm.duty_u16(0)
-                        pwm2.duty_u16(0)
-                s.close()          # Close socket
-
             # listen for touch
-            else:
-                print("listening for touch")
+            if alternate:
+                print("listen for touch")
                 touch.update()
                 # if touched, set boolean to true, and send to server on the next turn
                 for c in touch.channels:
@@ -212,11 +183,40 @@ def main():
                         touched = True
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
+            # listen to server
+            else:
+                # TODO change ip address for server
+                addr = socket.getaddrinfo("192.168.12.137", 80)[0][-1] # Address of Web Server
+                print("listening to server")
+                # Create a socket and make a HTTP request
+                s = socket.socket() # Open socket
+                s.connect(addr)
+                if touched:
+                    print("touch sent")
+                    s.send('touch') # Send request
+                    ss = str(s.recv(512)) # Store reply
+                    touched = False
+                else:
+                    print("not touched")
+                    pwm.duty_u16(0)
+                    pwm2.duty_u16(0)
+                    s.send('Hi from ' + wlan.ifconfig()[0][-3:])
+                    ss = str(s.recv(512)) # Store reply
+                if ss:
+                    print(ss)
+                    if "touch" in ss:
+                        print("touch received")
+                        pwm.duty_u16(PWM_MAX)
+                        pwm2.duty_u16(PWM_MAX)
+                        time.sleep(2) # buzz for 1 second
+                    else:
+                        pwm.duty_u16(0)
+                        pwm2.duty_u16(0)
+                s.close()          # Close socket
 
             alternate = not alternate
             time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
-
-
+    led.value(0)

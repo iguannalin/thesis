@@ -186,6 +186,19 @@ pwm2 = machine.PWM(machine.Pin(27), freq=50)
 # cap. touch pins
 caps = [0, 4]
 PWM_MAX = 65025
+request = ""
+
+def ping_client(msg):
+    print("pinging client")
+    try:
+        cl, addr = s.accept()
+        request = cl.recv(1024)
+        print("received request ", request)
+        cl.send(msg)
+        cl.close()
+    except OSError as e:
+        # cl.close()
+        print('could not reach ', addr)
 
 # self test
 def main():
@@ -196,13 +209,15 @@ def main():
         while True:
             print("touch ", touched)
             if is_connnected:
+                # alternate between listening to server or listening for touch
                 # listen for touch
-                print("listen for touch")
                 if alternate:
+                    print("listen for touch")
                     touch.update()
+                    # if touched, set boolean to true, and send to server on the next turn
                     for c in touch.channels:
+                        print(c.level)
                         if (c.level > 0.5):
-                            print(c.level)
                             touched = True
                             pwm.duty_u16(PWM_MAX)
                             pwm2.duty_u16(PWM_MAX)
@@ -210,29 +225,16 @@ def main():
                 else:
                     print("listening to client")
                     if touched:
-                        try:
-                            cl, addr = s.accept()
-                            request = cl.recv(1024)
-                            cl.send("touch")
-                            print("Sent touch")
-                            touched = False
-                            cl.close()
-                        except OSError as e:
-                            # cl.close()
-                            print('could not reach ')
-                    elif "touched" in request:
+                        touched = False
+                        ping_client("touch")
+                        print("touch sent ")
+                    elif "touch" in request:
                         print("touch received")
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
+                        time.sleep(2) # buzz for 1 second
                     else:
-                        try:
-                            cl, addr = s.accept()
-                            request = cl.recv(1024)
-                            cl.send("Hi from server")
-                            cl.close()
-                        except OSError as e:
-                            # cl.close()
-                            print('could not reach ')
+                        ping_client("Hi from server")
                         pwm.duty_u16(0)
                         pwm2.duty_u16(0)
                 
@@ -241,5 +243,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
+    led.value(0)
