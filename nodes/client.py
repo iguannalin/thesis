@@ -179,10 +179,11 @@ def main():
                 s = socket.socket() # Open socket
                 s.connect(addr)
                 if touched:
+                    print("touched")
                     s.send(b"touched") # Send request
                     touched = False
                 else:
-                    s.send(b"Hi from " + wlan.ifconfig()[0][-1])
+                    s.send(b"Hi from " + wlan.ifconfig()[0][-3])
                 ss = str(s.recv(512)) # Store reply
                 if ss:
                     print(ss)
@@ -191,7 +192,6 @@ def main():
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
                         time.sleep(3) # buzz for 3 seconds
-
                     else:
                         pwm.duty_u16(0)
                         pwm2.duty_u16(0)
@@ -204,17 +204,13 @@ def main():
                 # if touched, set boolean to true, and send to server on the next turn
                 for c in touch.channels:
                     print(c.level)
-                    if (c.level > 0.1):
+                    if (c.level > 0.5):
                         touched = True
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
 
             alternate = not alternate
-            time.sleep(0.02)
+            time.sleep(0.03)
 
 if __name__ == '__main__':
     main()
-
-
-
-

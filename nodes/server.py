@@ -70,9 +70,10 @@ def ping_client(msg, baddy):
     print("pinging client", baddy)
     try:
         cl = s.connect(baddy)
+        request = cl.recv(1024)
         s.sendto(msg, baddy)
-        cl.send(response)
-        print("Sent:" + response)
+        cl.send(msg)
+        print("Sent: " + msg)
         cl.close()
 
     except OSError as e:
@@ -92,8 +93,9 @@ def listen():
         # send touch to random client that is not the touched client
         if ("touched" in request):
             if len(addies) > 1:
-                aIndex = addies.index(addr[0])
-                addy = random.choice(addies[:aIndex-1]+addies[:aIndex])
+                addy = random.choice(addies)
+                while addy == addr[0]:
+                    addy = random.choice(addies)
                 baddy = findBaddy(addy)
                 ping_client("touched", baddy)
                 print("***", addr[0], " touched ", baddy)
@@ -112,9 +114,6 @@ def main():
             listen()
             # for badd in baddies:
             #     ping_client("", badd)
-            time.sleep(0.01)
 
 if __name__ == '__main__':
     main()
-
-
