@@ -31,11 +31,11 @@ while max_wait > 0:
         led.value(1)
     else:
         led.value(0)
-    # print(wlan.status())
+    print(wlan.status())
     if wlan.status() < 0 or wlan.status() >= 3:
         break
     max_wait -= 1
-    # print('waiting for connection...')
+    print('waiting for connection...')
     time.sleep(1)
 
 # Handle connection error
@@ -43,7 +43,7 @@ if wlan.status() != 3:
     raise RuntimeError('network connection failed')
 else:
     led.value(1)
-    # print('connected')
+    print('connected')
     is_connnected = True
     status = wlan.ifconfig()
     print( 'ip = ' + status[0] )
@@ -189,14 +189,16 @@ PWM_MAX = 65025
 
 def ping_client(msg):
     touch_received = False
-    # print("pinging client")
+    led.value(0)
+    print("pinging client")
     try:
         cl, addr = s.accept()
         request = cl.recv(1024)
-        # print("received request ", request)
+        print("received request ", request)
         if "touch" in request:
             touch_received = True
         cl.send(msg)
+        led.value(1)
         cl.close()
     except OSError as e:
         # cl.close()
@@ -210,29 +212,29 @@ def main():
     touch_received = False
     with (Device(caps)) as touch:
         while True:
-            # print("touch ", touched)
+            print("touch ", touched)
             if is_connnected:
                 # alternate between listening to server or listening for touch
                 # listen for touch
                 if alternate:
-                    # print("listen for touch")
+                    print("listen for touch")
                     touch.update()
                     # if touched, set boolean to true, and send to server on the next turn
                     for c in touch.channels:
-                        # print(c.level)
+                        print(c.level)
                         if (c.level > 0.5):
                             touched = True
                             pwm.duty_u16(PWM_MAX)
                             pwm2.duty_u16(PWM_MAX)
                 # listen to client
                 else:
-                    # print("listening to client")
+                    print("listening to client")
                     if touched:
                         touched = False
                         touch_received = ping_client("touch")
-                        # print("touch sent ")
+                        print("touch sent ")
                     elif touch_received:
-                        # print("touch received")
+                        print("touch received")
                         pwm.duty_u16(PWM_MAX)
                         pwm2.duty_u16(PWM_MAX)
                         touch_received = False
@@ -248,5 +250,3 @@ def main():
 if __name__ == '__main__':
     main()
     led.value(0)
-
-
