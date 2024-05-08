@@ -1,7 +1,7 @@
 :root {
-  --main-bg-color: rgb(35, 35, 35);
-  --main-text-color: #f9faffde;
-  --shadow-color: #858ebc;
+  --main-bg-color: white;
+  --main-text-color: #000;
+  --shadow-color: #a7b6ffeb;
 }
 
 html {
