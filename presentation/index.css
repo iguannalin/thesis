@@ -51,10 +51,11 @@ h2 {
   line-height: 26px;
   margin: 0 0 12px;
   padding: 12px;
+  font-style: italic;
 }
 
 img, video {
-  width: 80vw;
+  min-width: 70vw;
   max-width: 500px;
   max-height: 500px;
 }
