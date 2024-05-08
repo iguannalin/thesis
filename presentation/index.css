@@ -24,6 +24,10 @@ body {
   font-size: 24px;
 }
 
+#container {
+  max-width: 90vw;
+}
+
 div {
   text-align: center;
 }
