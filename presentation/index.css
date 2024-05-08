@@ -1,7 +1,7 @@
 :root {
   --main-bg-color: white;
   --main-text-color: #000;
-  --shadow-color: #a7b6ffeb;
+  --shadow-color: #e8ebfceb;
 }
 
 html {
@@ -20,6 +20,7 @@ body {
   text-shadow: var(--shadow-color) -2px 2px 8px;
   margin: 0 auto;
   cursor: pointer;
+  font-family: Georgia, serif;
   font-size: 24px;
 }
 
@@ -49,7 +50,7 @@ h2 {
 }
 
 img, video {
-  width: 80vw;
+  width: 100vw;
   max-width: 500px;
   max-height: 500px;
 }
