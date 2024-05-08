@@ -32,7 +32,7 @@ window.addEventListener("load", () => {
       color = "rgb(35, 35, 35)";
     }
     const text = `<!DOCTYPE html><html> <head> <title>HCI</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> 
-    <link rel="stylesheet" href="https://iguannalin.github.io/thesis/presentation/index.css"/></head>
+    <link rel="stylesheet" href="http://127.0.0.1:5500/index.css"/></head>
     <body><div id="overlay"></div> <div id="container" data-info=${btoa(info)}></div></body><script>let container = document.getElementById('container'); if (container.dataset.info) container.innerHTML = atob(container.dataset.info); document.body.style.backgroundColor = '${color}';</script></html>`;
     const blob = new Blob([text], {type: "text/html"});
     const blobUrl = URL.createObjectURL(blob);
