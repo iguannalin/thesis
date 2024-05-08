@@ -15,7 +15,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-flow: column;
-  background-color: var(--main-bg-color);
+  /* background-color: var(--main-bg-color); */
   color: var(--main-text-color);
   text-shadow: var(--shadow-color) -2px 2px 8px;
   margin: 0 auto;
