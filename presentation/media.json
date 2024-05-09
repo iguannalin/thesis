@@ -1,5 +1,5 @@
 [
-  "<h1>soft networks</h1><p>anna y lin</p>",
+  "<h1>soft networks</h1><h2>anna y lin</h2>",
   "<h2>HCI<h2>",
   "<h2>human computer interface</h2>",
   "<img src='http://127.0.0.1:5500/assets/final.jpg'/>",
@@ -73,5 +73,8 @@
   "<img src='http://127.0.0.1:5500/assets/final2.jpg'/>",
   "<img src='http://127.0.0.1:5500/assets/final3.jpg'/>",
   "<img src='http://127.0.0.1:5500/assets/final.jpg'/>",
+  "<img src='http://127.0.0.1:5500/assets/final1.jpg'/>",
+  "<img src='http://127.0.0.1:5500/assets/final2.jpg'/>",
+  "<img src='http://127.0.0.1:5500/assets/final3.jpg'/>",
   "<h2>thank you</h2>"
 ]

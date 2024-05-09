@@ -1,13 +1,3 @@
-:root {
-  --main-bg-color: white;
-  --main-text-color: #000;
-  --shadow-color: #e8ebfceb;
-}
-
-html {
-  display: block;
-}
-
 body {
   display: flex;
   width: 100vw;
@@ -15,9 +5,8 @@ body {
   justify-content: center;
   align-items: center;
   flex-flow: column;
-  /* background-color: var(--main-bg-color); */
-  color: var(--main-text-color);
-  text-shadow: var(--shadow-color) -2px 2px 8px;
+  color: #000;
+  text-shadow: #e8ebfceb -2px 2px 8px;
   margin: 0 auto;
   cursor: pointer;
   font-family: 'Times New Roman', serif;
@@ -29,24 +18,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-flow: column;
 }
 
 div {
   text-align: center;
-}
-
-h1 {
-  text-align: center;
-  vertical-align: middle;
-}
-
-.guide-link {
-  position: absolute;
-}
-
-a:hover {
-  color: blue;
-  transform: scale(1.1);
 }
 
 h2 {
@@ -57,7 +33,7 @@ h2 {
   font-style: italic;
 }
 
-img, video {
+img {
   min-width: 70vw;
   max-width: 500px;
   max-height: 500px;
