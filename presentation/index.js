@@ -17,8 +17,9 @@ window.addEventListener("load", () => {
 
   function start(e) {
     e.preventDefault();
-    interval = setInterval(createWindow, 6000);
+    // interval = setInterval(createWindow, 6000);
     // interval = setInterval(createWindow, 500);
+    interval = setInterval(createWindow, 600);
   }
 
   function createWindow() {
@@ -36,7 +37,7 @@ window.addEventListener("load", () => {
     <body><div id="overlay"></div> <div id="container" data-info=${btoa(info)}></div></body><script>let container = document.getElementById('container'); if (container.dataset.info) container.innerHTML = atob(container.dataset.info); document.body.style.backgroundColor = '${color}';</script></html>`;
     const blob = new Blob([text], {type: "text/html"});
     const blobUrl = URL.createObjectURL(blob);
-    window.open(blobUrl, '_blank', `location=0,menubar=0,status=0,scrollbars=0,toolbar=0,resizable=0,popup,width=${WW},height=${HH},left=${getRandomInt(0,screen.width)},top=${getRandomInt(0,screen.height)}`);
+    window.open(blobUrl, '_blank', `location=0,menubar=0,status=0,scrollbars=0,toolbar=0,resizable=0,popup,width=${WW},height=${HH},left=${getRandomInt(0,screen.width)},top=${getRandomInt(0,screen.height-300)}`);
     window.URL.revokeObjectURL(blobUrl);
     index++;
     // if (index == 1) interval = setInterval(createWindow, 5000);
