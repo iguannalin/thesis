@@ -16,8 +16,8 @@ window.addEventListener("load", () => {
     e.preventDefault();
     e.target.innerHTML = "🇵🇸"
     for (let i = 0; i < infos.length; i++) {
-      // setTimeout(()=>{createWindow(i);}, (i+1) * 5800);
-      setTimeout(()=>{createWindow(i);}, (i+1) * 500);
+      setTimeout(()=>{createWindow(i);}, (i+1) * 5700);
+      // setTimeout(()=>{createWindow(i);}, (i+1) * 500);
     }
   }
 
