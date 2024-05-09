@@ -4,11 +4,9 @@ window.addEventListener("load", () => {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
   }
-  const container = document.getElementById("container");
   let infos = [];
   let interval;
   let index = 0;
-  let paused = false;
 
   fetch("media.json").then((r)=>r.json()).then((d) => {
     infos=Array.from(d);
@@ -17,9 +15,9 @@ window.addEventListener("load", () => {
 
   function start(e) {
     e.preventDefault();
-    // interval = setInterval(createWindow, 6000);
+    interval = setInterval(createWindow, 5500);
     // interval = setInterval(createWindow, 500);
-    interval = setInterval(createWindow, 600);
+    // interval = setInterval(createWindow, 600);
   }
 
   function createWindow() {
@@ -40,8 +38,6 @@ window.addEventListener("load", () => {
     window.open(blobUrl, '_blank', `location=0,menubar=0,status=0,scrollbars=0,toolbar=0,resizable=0,popup,width=${WW},height=${HH},left=${getRandomInt(0,screen.width)},top=${getRandomInt(0,screen.height-300)}`);
     window.URL.revokeObjectURL(blobUrl);
     index++;
-    // if (index == 1) interval = setInterval(createWindow, 5000);
-    console.log({index, infos});
     if (index >= infos.length) 
       clearInterval(interval);
   }
