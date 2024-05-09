@@ -5,17 +5,18 @@ window.addEventListener("load", () => {
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
   }
   let infos = [];
+  let begin = document.getElementById("begin");
 
   fetch("media.json").then((r)=>r.json()).then((d) => {
     infos=Array.from(d);
-    document.addEventListener('click', start, {passive: false});
-    document.getElementById("begin").addEventListener("click", (el) => el.target.innerHTML = "🇵🇸");
+    begin.addEventListener('click', start, {passive: false});
   });
 
   function start(e) {
     e.preventDefault();
+    e.target.innerHTML = "🇵🇸"
     for (let i = 0; i < infos.length; i++) {
-      setTimeout(()=>{createWindow(i);}, (i+1) * 5500);
+      setTimeout(()=>{createWindow(i);}, (i+1) * 5700);
     }
   }
 
